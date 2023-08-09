@@ -28,17 +28,35 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isRecording) {
             const timestamp = performance.now();
             if (timestamp - lastTimestamp >= 50) { // Record every 10th of a second (100ms)
-                recordedData.push({ x: event.clientX, y: event.clientY });
+                recordedData.push({ type: 'mousemove', x: event.clientX, y: event.clientY });
                 lastTimestamp = timestamp;
             }
+        }
+    });
+
+    document.addEventListener('mousedown', (event) => {
+        if (isRecording) {
+            recordedData.push({ type: 'mousedown', x: event.clientX, y: event.clientY });
+        }
+    });
+
+    document.addEventListener('mouseup', (event) => {
+        if (isRecording) {
+            recordedData.push({ type: 'mouseup', x: event.clientX, y: event.clientY });
         }
     });
 
     function generatePythonScript(data) {
         let pythonScript = 'import time\nimport pyautogui\n\n'; // Import statements
         for (let i = 0; i < data.length; i++) {
-            const { x, y } = data[i];
-            pythonScript += `pyautogui.moveTo(${x}, ${y}, duration=0.05)\n`;
+            const { type, x, y } = data[i];
+            if (type === 'mousemove') {
+                pythonScript += `pyautogui.moveTo(${x}, ${y}, duration=0.05)\n`;
+            } else if (type === 'mousedown') {
+                pythonScript += `pyautogui.mouseDown(${x}, ${y}, button='left')\n`;
+            } else if (type === 'mouseup') {
+                pythonScript += `pyautogui.mouseUp(${x}, ${y}, button='left')\n`;
+            }
         }
         return pythonScript;
     }
