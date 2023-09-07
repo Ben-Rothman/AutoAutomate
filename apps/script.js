@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('mousemove', (event) => {
         if (isRecording) {
             const timestamp = performance.now();
-            if (timestamp - lastTimestamp >= 50) { // Record every 10th of a second (100ms)
+            if (timestamp - lastTimestamp >= 25) { // Record every 10th of a second (100ms)
                 recordedData.push({ type: 'mousemove', x: event.clientX, y: event.clientY });
                 lastTimestamp = timestamp;
             }
